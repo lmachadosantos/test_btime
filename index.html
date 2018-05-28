@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Teste Btime - Entradas no Banco</title>
+
+    <script src="/js/jquery-3.3.1.min.js"></script>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="py-5 text-center">
+        <h2>Teste Btime - Entradas no Banco</h2>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 order-md-1">
+            <h4 class="mb-3">Entradas no Banco - (<a href="http://dojopuzzles.com/problemas/exibe/entradas-no-banco/" target="_blank">Link Dojo</a>)</h4>
+            <form class="needs-validation" id="form_send" method="post" enctype="multipart/form-data">
+
+                <div class="mb-3">
+                    <label for="arquivoLog">Carregue o arquivo de log.</label>
+                    <div class="input-group">
+                        <input type="file" name="arquivoLog" class="form-control" id="arquivoLog" required>
+                    </div>
+                </div>
+
+                <hr class="mb-4">
+                <button class="btn btn-primary btn-lg btn-block">Validar Arquivo</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row py-3">
+        <div class="col-md-12 order-md-1">
+            <div class="alert alert-danger" style="display: none" id="mgsError" role="alert"></div>
+            <div class="alert alert-secondary" style="display: none" id="mgsInfo" role="alert"></div>
+        </div>
+    </div>
+
+    <footer class="my-5 pt-5 text-muted text-center text-small">
+        <p class="mb-1">&copy; 2017-2018 Btime</p>
+    </footer>
+</div>
+<script>
+
+    $(function(){
+        $('#form_send').submit(function(){
+
+            $("#mgsError").html("").hide();
+            $("#mgsInfo").html("").hide();
+
+            var formulario = document.getElementById('form_send');
+            var formData = new FormData(formulario);
+
+            $.ajax({
+                method: "POST",
+                url: "form_send.php",
+                data: formData,
+                dataType: "json",
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function( data )
+                {
+                    if(data.code == 1) {
+                        $.each(data.text, function(dia, quantidade) {
+                            $("#mgsInfo").append('<p>Data: <strong>' + dia + '</strong> - Quantidade de entradas no banco: <strong>' + quantidade + '</strong></p>');
+                        });
+
+                        $("#mgsInfo").show();
+                    }else {
+                        $("#mgsError").html(data.text).show();
+                    }
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>
